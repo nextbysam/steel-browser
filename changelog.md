@@ -56,6 +56,27 @@ All changes to this project are documented here. Updated after every step.
 - Built orchestrator first since it's the core value.
 - Used `ws` package for CDP WebSocket proxy (not http-proxy) for better control.
 
+## [2026-03-24] Orchestrator Deployed on Orb Cloud
+
+### Deployed
+- Steel Orchestrator running live at **https://0669167d.orbcloud.dev**
+- Computer ID: `0669167d-c551-4370-8082-410523ee5653`
+- Health endpoint working: `GET /v1/health` → `{"status":"ok"}`
+- Extended health: `GET /v1/orchestrator/health` → sessions, warm pool, uptime stats
+- Agent stays alive (agent_count: 1) — confirmed fix from Orb team
+
+### Issues Found & Resolved with Orb Team
+1. Agent process dying → entry point CWD was wrong, fixed by Orb
+2. DNS/npm ci failing → subnet collision on computer, fixed by Orb
+3. [agent.env] via exec → env vars are injected into agent process, not exec shell (by design)
+4. Exec timeout → 10s by design, use build steps for long commands
+5. ${VAR} syntax → resolves from org secrets at deploy, use literal values instead
+
+### Current State
+- Orchestrator: LIVE on Orb Cloud, health endpoints working
+- Session creation: fails because Steel Browser VMs need Chromium (not available via Orb build steps)
+- Next: need a way to run Steel Browser Docker image on Orb, or use an external compute provider for the browser VMs
+
 ## [2026-03-24] Orchestrator README
 
 ### Added
