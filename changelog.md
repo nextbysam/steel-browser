@@ -56,6 +56,17 @@ All changes to this project are documented here. Updated after every step.
 - Built orchestrator first since it's the core value.
 - Used `ws` package for CDP WebSocket proxy (not http-proxy) for better control.
 
+## [2026-03-24] Orchestrator README
+
+### Added
+- `orchestrator/README.md` — full documentation with:
+  - Quick start guide
+  - Usage examples (Steel SDK, Puppeteer, session persistence, concurrency)
+  - API reference (standard Steel endpoints + new orchestrator endpoints)
+  - Configuration reference
+  - Architecture diagram
+  - "Why not K8s" comparison table
+
 ## [2026-03-24] Initial Setup
 
 ### Added
