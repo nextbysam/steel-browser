@@ -1,0 +1,29 @@
+[agent]
+name = "steel-browser"
+lang = "node"
+entry = "api/build/index.js"
+
+[source]
+git = "https://github.com/steel-dev/steel-browser.git"
+branch = "main"
+
+[build]
+steps = [
+  "cd /tmp && curl -sL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb && apt-get update && apt-get install -y ./chrome.deb xvfb nginx dbus dbus-x11 procps fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf && mkdir -p /tmp/files",
+  "cd /agent/code && sed -i s/husky/echo_noop/ package.json && npm install --workspace=api",
+  "cd /agent/code && npm run build --workspace=api"
+]
+working_dir = "/agent/code"
+
+[agent.env]
+CHROME_EXECUTABLE_PATH = "/usr/bin/google-chrome"
+CHROME_HEADLESS = "true"
+DISABLE_CHROME_SANDBOX = "true"
+HOST = "0.0.0.0"
+PORT = "3000"
+
+[backend]
+provider = "custom"
+
+[ports]
+expose = [3000, 9223]
