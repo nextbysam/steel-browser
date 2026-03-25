@@ -93,3 +93,29 @@ All changes to this project are documented here. Updated after every step.
 ### Added
 - Forked steel-dev/steel-browser to nextbysam/steel-browser
 - Created `orb-cloud-integration` branch
+
+## [2026-03-25] Checkpoint/Restore Test with Chrome
+
+### Tested
+- Steel Browser running with active session, 8 cookies (Google, Wikipedia), localStorage
+- Attempted CRIU checkpoint via `POST /v1/computers/{id}/agents/demote`
+- **Result: CRIU dump FAILED**
+  - Error: "CRIU namespaced dump failed for PID"
+  - Chrome's multi-process architecture (browser + renderer + GPU processes)
+    uses shared memory, /dev/shm, and complex IPC that CRIU can't snapshot
+
+### Implications
+- Chrome does NOT survive checkpoint/restore on Orb (as of today)
+- The "browser sessions that sleep for free" pitch needs adjustment
+- Orb's checkpoint/restore works for simple Node.js processes, but not Chrome
+- This is a known CRIU limitation with multi-process apps
+
+### Steel Browser Still Works
+- Steel survived the failed checkpoint attempt (still running, health OK)
+- Sessions, scraping, screenshots all still functional
+
+### Revised Strategy
+- Checkpoint/restore is NOT the killer feature for browser use cases
+- Focus on: multi-session orchestration, auth, persistence, and cost savings
+- The 10-60x cost savings from Orb's pricing model is still real value
+- Session context can be saved/restored via Steel's context API (our ContextStore)
