@@ -119,3 +119,24 @@ All changes to this project are documented here. Updated after every step.
 - Focus on: multi-session orchestration, auth, persistence, and cost savings
 - The 10-60x cost savings from Orb's pricing model is still real value
 - Session context can be saved/restored via Steel's context API (our ContextStore)
+
+## [2026-03-25] Multi-Session Proven — Two Steel VMs on Orb
+
+### Verified
+- **VM 1** (8bcd9357): Steel Browser + Chrome, health OK, scrape Google OK, sessions working
+- **VM 2** (0a4365b7): Steel Browser + Chrome, health OK, independent sessions
+- Both running simultaneously with different session IDs
+- Complete isolation — separate Chrome instances, separate session state
+
+### Build Workaround Documented
+The getcwd bug in Orb's build step runner causes npm to exit 1.
+Workaround: build step installs Chrome via apt-get, then use exec endpoint to:
+1. `git checkout package.json` (restore if sed damaged it)
+2. Node script to replace only `scripts.prepare` (not the husky dep)
+3. `npm install --workspace=api` (with native modules)
+4. `npm run build --workspace=api`
+
+### CRIU/Checkpoint Result
+- Chrome CANNOT be checkpointed by CRIU (multi-process, shared memory)
+- The "sleep for free" feature does NOT work for browser sessions
+- Session persistence must use Steel's context API (save/restore cookies)
