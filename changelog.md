@@ -140,3 +140,31 @@ Workaround: build step installs Chrome via apt-get, then use exec endpoint to:
 - Chrome CANNOT be checkpointed by CRIU (multi-process, shared memory)
 - The "sleep for free" feature does NOT work for browser sessions
 - Session persistence must use Steel's context API (save/restore cookies)
+
+## [2026-03-25] Single-Shot Build Works + CRIU Partial Success
+
+### Single-Shot Build — FIXED
+- Build step getcwd issue fixed by Orb team
+- All 5 steps pass: git clone, apt-get chrome, npm pkg set, npm ci, npm build
+- No manual exec workarounds needed anymore
+- `chromium` package on Ubuntu 24.04 is snap stub — must use Google Chrome deb
+
+### CRIU Checkpoint — PARTIAL
+- **Demote (freeze) WORKS** — Chrome process tree checkpointed to NVMe
+  - Response: `{"status":"demoted","checkpoint_dir":"/orb/checkpoints/agent_10005_..."}`
+  - This confirms the --ghost-limit and --file-locks fixes work
+- **Promote (restore) FAILS** — `CRIU restore failed for agent 10005`
+  - Checkpoint data saved but can't be restored
+  - Likely needs additional CRIU restore flags
+  - Message sent to Orb team about restore failure
+
+### Working orb.toml for Steel Browser
+```toml
+[build]
+steps = [
+  "cd /tmp && curl -sL .../google-chrome-stable_current_amd64.deb ...",
+  "npm pkg set scripts.prepare='echo noop'",
+  "npm ci --workspace=api",
+  "npm run build --workspace=api"
+]
+```

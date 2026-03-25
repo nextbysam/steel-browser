@@ -9,9 +9,10 @@ branch = "main"
 
 [build]
 steps = [
-  "cd /tmp && curl -sL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb && apt-get update && apt-get install -y ./chrome.deb xvfb nginx dbus dbus-x11 procps fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf && mkdir -p /tmp/files",
-  "cd /agent/code && sed -i s/husky/echo_noop/ package.json && npm install --workspace=api",
-  "cd /agent/code && npm run build --workspace=api"
+  "cd /tmp && curl -sL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb && apt-get update && apt-get install -y ./chrome.deb xvfb fonts-liberation dbus dbus-x11 nginx procps",
+  "npm pkg set scripts.prepare='echo noop'",
+  "npm ci --workspace=api",
+  "npm run build --workspace=api"
 ]
 working_dir = "/agent/code"
 
