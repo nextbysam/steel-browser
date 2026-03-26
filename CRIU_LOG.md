@@ -12,3 +12,4 @@ Tracking every CRIU test attempt for Steel Browser + Chrome on Orb Cloud.
 | 2026-03-26T21:21:44Z | f2103a57 (playwright) | 10027 | - | - | - | - | Health failed |
 | 2026-03-26T21:23:23Z | 3d8f75a4 (playwright) | 10028 | - | - | - | - | Health failed |
 | 2026-03-27T00:00:00Z | 61d3bdbc (playwright) | 10007 | PASS | PASS | 121082B (3 cookies) | 121082B | CRIU WORKS! Playwright + Chromium checkpoint/restore verified |
+| 2026-03-27T00:30:00Z | 61d3bdbc (playwright) | 10007 | PASS x3 | PASS x3 | Google 121KB, Wiki 51KB, HN 117KB | All match | STRESS TEST: 3 rapid cycles, all pass |
