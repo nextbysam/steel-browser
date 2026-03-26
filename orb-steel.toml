@@ -9,7 +9,7 @@ branch = "main"
 
 [build]
 steps = [
-  "cd /tmp && curl -sL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb && apt-get update && apt-get install -y ./chrome.deb xvfb fonts-liberation dbus dbus-x11 nginx procps",
+  "dpkg --configure -a 2>/dev/null; cd /tmp && curl -sL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb && apt-get update && apt-get install -y ./chrome.deb xvfb fonts-liberation dbus dbus-x11 nginx procps || (dpkg --configure -a && apt-get install -y -f)",
   "npm pkg set scripts.prepare='echo noop'",
   "npm ci --workspace=api",
   "npm run build --workspace=api"
