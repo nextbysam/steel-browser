@@ -162,3 +162,15 @@ steps = [
   - If Orb's nginx can proxy WebSocket to 9222 directly, remove our proxy entirely
   - The server.js only needs to provide HTTP endpoints (/health, /json/version, /set-host)
   - WebSocket goes nginx → Chrome directly on port 9222
+
+## browser-use + Orb Cloud — VERIFIED (2026-03-27)
+
+- browser-use 0.12.5 connects via CDP WebSocket — just needs a wss:// URL
+- URL pattern: wss://{id}.orbcloud.dev/_port/9222/devtools/browser/{guid}
+- Chrome binds to 127.0.0.1 only — need TCP proxy on 0.0.0.0:9222 → 127.0.0.1:9223
+- Orb _port/9222 proxy routes external traffic to container 9222
+- /set-host endpoint needed to set public hostname (Orb doesn't pass it in headers)
+- /cdp endpoint returns the full wss:// URL for browser-use
+- Full flow verified: connect → navigate Google → sleep → wake → still on Google → navigate again
+- WebSocket drops on checkpoint (expected) — browser-use must reconnect after wake
+- Browser ID stays the same across checkpoint/restore (same /cdp URL works)
