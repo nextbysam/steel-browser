@@ -126,3 +126,22 @@ steps = [
 - SDK deploy() reads orb.toml from disk (relative path ../orb.toml from sdk/)
 - Build from the orb-browser repo takes ~1 min (vs 3-5 min from steel-browser)
 - orb.toml source.git must point to the repo where server.js lives
+
+## CDP WebSocket Proxy (2026-03-27)
+
+- Orb's HTTPS proxy (nginx) routes HTTP to the container's exposed port
+- WebSocket upgrades through the HTTPS proxy DON'T work (wss:// connections fail)
+- Direct host port (e.g., 65.108.74.27:40027) is also unreachable (firewall)
+- HTTP-based CDP endpoints (/json/version, /json) work through HTTPS proxy
+- WebSocket-based CDP (devtools/browser/ID) does NOT work through HTTPS proxy
+- This blocks browser-use integration — browser-use needs a WebSocket CDP connection
+- Need to ask Orb team to enable WebSocket forwarding on their nginx proxy
+
+## browser-use Integration (2026-03-27)
+
+- browser-use 0.12.5 uses direct CDP (not Playwright)
+- Constructor: Browser(cdp_url="http://host:port") — just needs HTTP/WS endpoint
+- No special Browserbase integration code — browser-use is provider-agnostic
+- The cdp_url is used to discover the WS debugger URL via /json/version
+- Then connects via WebSocket to the devtools/browser/ID path
+- If WebSocket is blocked, browser-use can't connect
