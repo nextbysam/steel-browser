@@ -145,3 +145,20 @@ steps = [
 - The cdp_url is used to discover the WS debugger URL via /json/version
 - Then connects via WebSocket to the devtools/browser/ID path
 - If WebSocket is blocked, browser-use can't connect
+
+## WebSocket CDP Proxy (2026-03-27) — UNRESOLVED
+
+- Orb nginx returns 101 Switching Protocols for WebSocket upgrade (confirmed via curl -v)
+- But actual WebSocket data exchange fails — "no close frame received or sent"
+- Tried two proxy approaches:
+  1. ws library (message-level proxy) — same failure
+  2. Raw TCP pipe (net module) — same failure
+- The connection upgrades but data doesn't flow
+- Possible causes:
+  - Orb nginx might buffer/interfere with WebSocket frames after 101
+  - The double-proxy (nginx → our server → Chrome CDP) might cause issues
+  - Our server's upgrade handler might conflict with nginx's
+- Need to test: expose port 9222 directly without our proxy in the middle
+  - If Orb's nginx can proxy WebSocket to 9222 directly, remove our proxy entirely
+  - The server.js only needs to provide HTTP endpoints (/health, /json/version, /set-host)
+  - WebSocket goes nginx → Chrome directly on port 9222
