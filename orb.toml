@@ -1,0 +1,23 @@
+[agent]
+name = "steel-browser"
+lang = "node"
+entry = "api/build/index.js"
+
+[source]
+git = "https://github.com/steel-dev/steel-browser.git"
+branch = "main"
+
+[build]
+steps = [
+  "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends chromium chromium-driver nginx xvfb default-jre dbus dbus-x11 procps fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 x11-xserver-utils curl unzip",
+  "npm ci --workspace=api",
+  "npm run build --workspace=api",
+  "mkdir -p /files"
+]
+working_dir = "/agent/code"
+
+[backend]
+provider = "custom"
+
+[ports]
+expose = [3000, 9223]
