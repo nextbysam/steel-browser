@@ -174,3 +174,14 @@ steps = [
 - Full flow verified: connect → navigate Google → sleep → wake → still on Google → navigate again
 - WebSocket drops on checkpoint (expected) — browser-use must reconnect after wake
 - Browser ID stays the same across checkpoint/restore (same /cdp URL works)
+
+## PyPI Publishing (2026-03-27)
+
+- Published: https://pypi.org/project/orb-browser/0.1.0/
+- Package name: orb-browser (pip install orb-browser)
+- Module name: orb_browser (from orb_browser import OrbBrowser)
+- pyproject.toml needs [tool.setuptools.packages.find] include = ["orb_browser*"]
+- Build with: python -m build
+- Upload with: twine upload dist/*
+- Orb build API: POST with no body (not empty JSON — urllib treats {} as falsy)
+- urllib.request: empty dict {} is falsy in Python, use "is not None" check
