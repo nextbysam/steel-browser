@@ -185,3 +185,26 @@ steps = [
 - Upload with: twine upload dist/*
 - Orb build API: POST with no body (not empty JSON — urllib treats {} as falsy)
 - urllib.request: empty dict {} is falsy in Python, use "is not None" check
+
+## WebSocket Stability (2026-03-28)
+
+- Simple WebSocket test (12 messages, 60s, 5s intervals): STABLE, zero drops
+- browser-use connection: UNSTABLE — drops during initialization
+- Root cause: browser-use downloads extensions, creates/destroys tabs rapidly,
+  sends massive CDP command bursts. This overwhelms the connection.
+- Orb's _port proxy keepalive fix resolved idle disconnects
+- But browser-use's aggressive init behavior still breaks connections
+- The approach of hosting a remote browser and connecting via CDP over internet
+  may be fundamentally wrong for browser-use — too much latency and too many
+  round trips for CDP's chatty protocol
+- Better approach might be: run browser-use ON Orb (same VM as Chrome)
+  and expose a task-level HTTP API, not raw CDP
+
+## Auto-Checkpoint Issue (2026-03-28)
+
+- Default idle_timeout is 120s
+- Chrome appears idle between browser-use commands
+- Orb auto-checkpoints the agent, killing the WebSocket mid-session
+- Fix: [lifecycle] idle_timeout = "3600s" in orb.toml
+- But CRIU restore often fails for auto-checkpointed agents ("agent wake timed out")
+- Better to use explicit sleep/wake than rely on auto-checkpoint
