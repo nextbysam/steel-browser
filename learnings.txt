@@ -208,3 +208,15 @@ steps = [
 - Fix: [lifecycle] idle_timeout = "3600s" in orb.toml
 - But CRIU restore often fails for auto-checkpointed agents ("agent wake timed out")
 - Better to use explicit sleep/wake than rely on auto-checkpoint
+
+## Python Agent on Orb (2026-03-28)
+
+- Python lang="python" WORKS on Orb (verified — build succeeded)
+- pip install browser-use playwright fastapi uvicorn — works in build steps
+- playwright install chromium — works with PLAYWRIGHT_BROWSERS_PATH env
+- FastAPI agent starts and serves /health
+- browser-use needs `uvx` binary — install `uv` package in build steps
+- browser-use with enable_default_extensions=False still tries uvx
+- PLAYWRIGHT_BROWSERS_PATH = "/home/awlsen/.cache/ms-playwright" (Orb-specific path)
+- DNS in Orb build environment is intermittently broken — builds fail 50%+ of the time
+- The approach is correct — just needs reliable DNS to build consistently
