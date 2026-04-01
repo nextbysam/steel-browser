@@ -220,3 +220,20 @@ steps = [
 - PLAYWRIGHT_BROWSERS_PATH = "/home/awlsen/.cache/ms-playwright" (Orb-specific path)
 - DNS in Orb build environment is intermittently broken — builds fail 50%+ of the time
 - The approach is correct — just needs reliable DNS to build consistently
+
+## /task Vision Endpoint (2026-04-01)
+
+- ChatVercel + GLM-5.1 works for text (no vision)
+- ChatVercel + Haiku via OpenRouter works for vision locally
+- GLM coding endpoint: https://api.z.ai/api/coding/paas/v4 (NOT /api/paas/v4)
+- GLM model: glm-5.1 (not glm-4.7 or glm-5)
+- GLM auth: pass key directly as Bearer (no JWT needed on z.ai)
+- OpenRouter model ID: anthropic/claude-haiku-4.5 (not claude-haiku-4-5-20251001)
+- Orb auto-detects 18+ LLM providers including OpenRouter
+- provider = "custom" with additional_domains works for unlisted providers
+- The /task vision endpoint hangs/deadlocks on Orb because:
+  - await page.screenshot() blocks the Playwright page
+  - All other async handlers (health, url, etc) also use the same page
+  - FastAPI's async event loop deadlocks
+  - Need to either: use a separate browser page for tasks, or run the
+    task in a background thread with its own Playwright page
